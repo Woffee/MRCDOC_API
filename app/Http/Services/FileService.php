@@ -10,6 +10,7 @@ namespace App\Http\Services;
 
 use App\Http\Models\Files;
 use App\Http\Models\Tools;
+use Illuminate\Http\File;
 
 class FileService
 {
@@ -36,8 +37,8 @@ class FileService
              'creator_picture' =>'',
              'type'            =>$file['type'],
              'content'         =>$file['content'],
-             'create_time'     =>$file['create_time'],
-             'update_time'     =>$file['update_time'],
+             'create_time'     =>Tools::human_time_diff($file['create_time']),
+             'update_time'     =>Tools::human_time_diff($file['update_time']),
         ];
     }
 
@@ -57,8 +58,8 @@ class FileService
                 'creator_picture' =>'',
                 'type'            =>$file['type'],
                 'content'         =>$file['content'],
-                'create_time'     =>$file['create_time'],
-                'update_time'     =>$file['update_time'],
+                'create_time'     =>Tools::human_time_diff($file['create_time']),
+                'update_time'     =>Tools::human_time_diff($file['update_time']),
             ];
         }
         return $res;
@@ -95,14 +96,42 @@ class FileService
         return $res ? true : false;
     }
 
-    public function moveFiles()
+    public function moveFiles($uid=0, $strFileIds='', $moveTo = 'desk')
     {
+        $fileIds = $this->explodeFileIds($strFileIds);
 
+        if( $moveTo != 'desk' && empty( Files::where([
+                'file_id'=> $moveTo,
+                'type' => 0
+            ])) ){
+            return false;
+        }
+
+        $res =  Files::where('creator',$uid)
+            ->where('status' , 0)
+            ->whereIn('file_id', $fileIds )
+            ->update(['in_folder'=>$moveTo]);
+        return $res ? true : false;
     }
 
-    public function deleteFiles()
+    public function deleteFiles($uid=0, $strFileIds='')
     {
+        $fileIds = $this->explodeFileIds($strFileIds);
 
+        $res =  Files::where('creator',$uid)
+            ->whereIn('file_id', $fileIds )
+            ->update(['status'=> 1]);
+        return $res ? true : false;
+    }
+
+    public function explodeFileIds($strFileIds)
+    {
+        $arr = explode(',',$strFileIds);
+        $res = [];
+        foreach ($arr as $one) {
+            if(!empty($one)) $res []= $one;
+        }
+        return $res;
     }
 
     /**

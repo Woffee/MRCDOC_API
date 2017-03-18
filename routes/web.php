@@ -28,8 +28,9 @@ $app->group([
     $app->get('/files/{file_id}', 'FileController@index');
     $app->post('/files', 'FileController@createFile');
     $app->put('/files', 'FileController@updateFile');
-    $app->delete('/files', 'FileController@deleteFile');
 
+    /** 批量文件移动和删除 */
+    $app->delete('/files', 'FileController@deleteFiles');
     $app->post('/files/move', 'FileController@moveFiles');
 
 

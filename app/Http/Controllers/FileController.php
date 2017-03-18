@@ -103,12 +103,46 @@ class FileController extends Controller
 
     public function moveFiles(Request $request)
     {
+        $inputs = $request->only('uid','file_ids','move_to');
+        $validator = app('validator')->make($inputs,[
+            'uid'        =>    'required|integer',
+            'file_ids'   =>    'required',
+            'move_to'    =>    'required',
+        ],['required' => ':attribute不能为空']);
+        if ($validator->fails()) return $this->error($validator->errors()->all());
 
+        $uid = (int)$inputs['uid'];
+        $file_ids  = $inputs['file_ids'];
+        $moveTo  = $inputs['move_to'];
+
+        $fileService = new FileService();
+        $fileService->setCreator($uid);
+
+        if( !$fileService->moveFiles($uid,$file_ids,$moveTo)  ){
+            return $this->error('移动失败');
+        }
+        return $this->success();
     }
 
     public function deleteFiles(Request $request)
     {
+        $inputs = $request->only('uid','file_ids');
+        $validator = app('validator')->make($inputs,[
+            'uid'        =>    'required|integer',
+            'file_ids'   =>    'required',
+        ],['required' => ':attribute不能为空']);
+        if ($validator->fails()) return $this->error($validator->errors()->all());
 
+        $uid = (int)$inputs['uid'];
+        $file_ids  = $inputs['file_ids'];
+
+        $fileService = new FileService();
+        $fileService->setCreator($uid);
+
+        if( !$fileService->deleteFiles($uid,$file_ids)  ){
+            return $this->error('删除失败');
+        }
+        return $this->success();
     }
 
 }

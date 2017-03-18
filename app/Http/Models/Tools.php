@@ -211,7 +211,7 @@ class Tools
      */
     public static function human_time_diff($from)
     {
-        $to = NOW_TIME;
+        $to = time();
 
         $per = $to >= $from ? '前' : '后';
         $diff = (int)abs($to - $from);
