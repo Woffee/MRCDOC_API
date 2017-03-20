@@ -9,7 +9,7 @@
 namespace App\Http\Services;
 
 use App\Http\Models\Files;
-use App\Http\Models\Tools;
+use App\Http\Libraries\Tools;
 use Illuminate\Http\File;
 
 class FileService
