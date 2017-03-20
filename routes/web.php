@@ -15,10 +15,13 @@ $app->get('/', function () use ($app) {
     return $app->version();
 });
 
+/** 登录 注册 */
+$app->post('/login', 'AuthController@login');
+$app->post('/register', 'AuthController@register');
+
 $app->group([
     'middleware'=> 'auth'
 ], function ($app) {
-    $app->get('/home', 'HomeController@index');
 
     /** 文件列表 */
     $app->get('/desk', 'FileController@desk');
@@ -32,6 +35,9 @@ $app->group([
     /** 批量文件移动和删除 */
     $app->delete('/files', 'FileController@deleteFiles');
     $app->post('/files/move', 'FileController@moveFiles');
+
+    /** 退出登录 */
+    $app->get('/logout', 'AuthController@logout');
 
 
 });
