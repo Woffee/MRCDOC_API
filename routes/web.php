@@ -39,5 +39,11 @@ $app->group([
     /** 退出登录 */
     $app->get('/logout', 'AuthController@logout');
 
+    /** 好友 */
+    $app->get('/search/{search}', 'FriendController@searchFriend');
+    $app->get('/friends', 'FriendController@friends');
+    $app->post('/friends', 'FriendController@addFriend');
+    $app->post('/friends/reply', 'FriendController@replyFriend');
+    $app->delete('/friends', 'FriendController@deleteFriend');
 
 });
