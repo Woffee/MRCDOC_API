@@ -7,6 +7,13 @@ use App\Http\Services\FileService;
 
 class FileController extends Controller
 {
+    /**
+     * 文件详情
+     *
+     * @param $file_id
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function index($file_id, Request $request)
     {
         $inputs = $request->only('uid');
@@ -17,30 +24,60 @@ class FileController extends Controller
 
         $uid = (int)$inputs['uid'];
 
-        $file = (new FileService())->getFileInfo($file_id);
-
-        //TODO 检查当前用户是否拥有查看权限
+        $file = (new FileService())->getFileInfo($uid,$file_id);
 
         return $this->success(['file'=>$file]);
     }
 
+    /**
+     * 桌面文件列表
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function desk(Request $request)
     {
-        $inputs = $request->only('uid');
+        $inputs = $request->only('uid','page','pagesize');
         $validator = app('validator')->make($inputs,[
             'uid'       =>    'required|integer',
         ],['required' => ':attribute不能为空']);
         if ($validator->fails()) return $this->error($validator->errors()->all());
 
-        $files = (new FileService())->getFilesByFolderId();
+        $uid = (int)$inputs['uid'];
+        $page = isset($inputs['page']) ? $inputs['page'] : 1;
+        $pagesize = isset($inputs['pagesize']) ? $inputs['pagesize'] : 10;
 
-        return $this->success(['files'=>$files]);
+        $fileService = new FileService();
+        $count = $fileService->getFilesCountInFolder($uid,'desk');
+        $files = $fileService->getFilesByFolderId($uid,'desk',$page,$pagesize);
+
+        return $this->success(['count'=>$count,'files'=>$files]);
     }
 
-    public function folder($folder_id)
+    /**
+     * 文件夹下的文件列表
+     *
+     * @param $folderid
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function folder($folderid,Request $request)
     {
-        $files = (new FileService())->getFilesByFolderId($folder_id);
-        return $this->success($files);
+        $inputs = $request->only('uid','page','pagesize');
+        $validator = app('validator')->make($inputs,[
+            'uid'       =>    'required|integer',
+        ],['required' => ':attribute不能为空']);
+        if ($validator->fails()) return $this->error($validator->errors()->all());
+
+        $uid = (int)$inputs['uid'];
+        $page = isset($inputs['page']) ? $inputs['page'] : 1;
+        $pagesize = isset($inputs['pagesize']) ? $inputs['pagesize'] : 10;
+
+        $fileService = new FileService();
+        $count = $fileService->getFilesCountInFolder($uid,$folderid);
+        $files = $fileService->getFilesByFolderId($uid,$folderid,$page,$pagesize);
+
+        return $this->success(['count'=>$count,'files'=>$files]);
     }
 
 

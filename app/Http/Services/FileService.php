@@ -21,9 +21,10 @@ class FileService
     private $_type = 1;
     private $_in_folder = 'desk';
 
-    public function getFileInfo($fileId)
+    public function getFileInfo($uid,$fileId)
     {
         $file = Files::where('file_id',$fileId)
+            ->where('uid' , $uid)
             ->where('status' , 0)
             ->where('type','<>', 0)
             ->first();
@@ -42,11 +43,26 @@ class FileService
         ];
     }
 
-    public function getFilesByFolderId( $folderId = 'desk')
+    public function getFilesCountInFolder($uid,$folderId)
     {
-        $files = Files::where('in_folder',$folderId)
+        return Files::where('in_folder',$folderId)
+            ->where('uid' , $uid)
             ->where('status',0)
+            ->count();
+    }
+
+    public function getFilesByFolderId($uid, $folderId = 'desk',$page = 1,$pageSize = 10)
+    {
+        $limit = (int)($page - 1) * $pageSize;
+        $offset = !empty($pageSize) ? (int)$pageSize : 10;
+
+        $files = Files::where('in_folder',$folderId)
+            ->where('uid' , $uid)
+            ->where('status',0)
+            ->skip($limit)
+            ->take($offset)
             ->get();
+
         $files =  $files ? $files->toArray() : [];
         $res = [];
         foreach ($files as $file){
