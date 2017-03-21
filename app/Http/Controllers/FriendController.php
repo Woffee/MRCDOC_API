@@ -16,7 +16,7 @@ use App\Http\Models\Friends;
 
 class FriendController extends Controller
 {
-    public function friends(Request $request)
+    public function index(Request $request)
     {
         $inputs = $request->only('uid');
         $validator = app('validator')->make($inputs, [

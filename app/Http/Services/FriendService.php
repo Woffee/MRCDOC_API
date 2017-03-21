@@ -8,6 +8,7 @@
 
 namespace App\Http\Services;
 
+use App\Http\Services\UserService;
 use App\Http\Models\Users;
 use App\Http\Models\Friending;
 use App\Http\Models\Friends;
@@ -26,8 +27,15 @@ class FriendService
 
     public function getMyFriends()
     {
-        $friends = Friends::select(['uid', 'fid'])->where('uid', $this->_uid)->get();
+        $friends = Friends::select(['fid'])->where('uid', $this->_uid)->get();
         $friends = $friends ? $friends->toArray() : [];
+
+        $userService = new UserService();
+        for( $i =0 ; $i<count($friends) ; $i++ ){
+            $user = $userService->getUserInfo($friends[$i]['fid']);
+            $friends[$i]['username'] = $user['username'];
+            $friends[$i]['picture'] = $user['picture'];
+        }
 
         return $friends;
     }

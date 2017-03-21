@@ -20,6 +20,13 @@ class UserService
     private $_type = 1;
     private $_in_folder = 'desk';
 
+    public function getUserInfo($uid)
+    {
+        //TODO Redis cache
+        $res = Users::where('id',$uid)->first();
+        return $res ? $res->toArray() : [];
+    }
+
     public function checkName($username)
     {
         $res = Users::where('username',$username)->first();

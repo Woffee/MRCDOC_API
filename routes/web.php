@@ -41,7 +41,7 @@ $app->group([
 
     /** 好友 */
     $app->get('/search/{search}', 'FriendController@searchFriend');
-    $app->get('/friends', 'FriendController@friends');
+    $app->get('/friends', 'FriendController@index');
     $app->post('/friends', 'FriendController@addFriend');
     $app->post('/friends/reply', 'FriendController@replyFriend');
     $app->delete('/friends', 'FriendController@deleteFriend');
