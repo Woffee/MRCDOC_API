@@ -28,7 +28,7 @@ $app->group([
     $app->get('/folder/{folderid}', 'FileController@folder');
 
     /** 文件 */
-    $app->get('/files/{file_id}', 'FileController@index');
+    $app->get('/files/{fileid}', 'FileController@index');
     $app->post('/files', 'FileController@createFile');
     $app->put('/files', 'FileController@updateFile');
 
@@ -46,4 +46,8 @@ $app->group([
     $app->post('/friends/reply', 'FriendController@replyFriend');
     $app->delete('/friends', 'FriendController@deleteFriend');
 
+    /** 协作者 */
+    $app->get('/writers', 'WriterController@writers');
+    $app->post('/writers', 'WriterController@createWriter');
+    $app->delete('/writers', 'WriterController@deleteWriter');
 });

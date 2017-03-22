@@ -21,6 +21,15 @@ class FileService
     private $_type = 1;
     private $_in_folder = 'desk';
 
+    public function isCreator($fileId,$uid)
+    {
+        return Files::where([
+            'file_id'=>$fileId,
+            'creator'=>$uid,
+            'status' =>0,
+        ])->exists();
+    }
+
     public function getFileInfo($uid,$fileId)
     {
         $file = Files::where('file_id',$fileId)

@@ -40,6 +40,15 @@ class FriendService
         return $friends;
     }
 
+    public function isFriends($uid,$fid)
+    {
+        return Friends::where([
+            'uid'=>$uid,
+            'fid'=>$fid,
+            'is_del' =>0,
+        ])->exists();
+    }
+
     /**
      * 添加好友记录
      *    注意：申请好友记录，无论对方同意或拒绝都给予保留

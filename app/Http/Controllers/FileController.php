@@ -4,17 +4,19 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Services\FileService;
+use App\Http\Services\WriterService;
+use App\Http\Models\Writers;
 
 class FileController extends Controller
 {
     /**
      * 文件详情
      *
-     * @param $file_id
+     * @param $fileid
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index($file_id, Request $request)
+    public function index($fileid, Request $request)
     {
         $inputs = $request->only('uid');
         $validator = app('validator')->make($inputs,[
@@ -24,7 +26,16 @@ class FileController extends Controller
 
         $uid = (int)$inputs['uid'];
 
-        $file = (new FileService())->getFileInfo($uid,$file_id);
+        /** 检查是否是协作者 */
+        $res = Writers::where('uid',$uid)
+            ->where('file_id',$fileid)
+            ->where('is_del',0)
+            ->first();
+//        if( empty($res) ){
+//            return $this->error('您没有编辑或查看此文件的权限');
+//        }
+
+        $file = (new FileService())->getFileInfo($uid,$fileid);
 
         return $this->success(['file'=>$file]);
     }
@@ -101,11 +112,18 @@ class FileController extends Controller
         $fileService->setFilename($filename);
         $fileService->setInFolder($inFolder);
         $fileService->setType($type);
-
         $file_id = $fileService->createFileGetId();
+
         if( empty($file_id) ){
             return $this->error('创建文件失败');
         }
+
+        $weriterService = new WriterService();
+        $res = $weriterService->createWriter($file_id,$uid);
+        if( !$res ){
+            return $this->error('添加协作者失败');
+        }
+
         return $this->success(['file_id'=>$file_id]);
     }
 
