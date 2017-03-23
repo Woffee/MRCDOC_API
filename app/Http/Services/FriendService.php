@@ -50,6 +50,32 @@ class FriendService
     }
 
     /**
+     * 获取向我提交好友申请的用户列表
+     * @param $uid
+     * @return array
+     */
+    public function getMyFriendings($uid)
+    {
+        $uid = (int)$uid;
+        if( empty($uid) ){
+            return [];
+        }
+
+        $friendings = Friending::select('from_uid as uid')
+            ->where('to_uid', $uid)
+            ->where('status',0)
+            ->get();
+        $friendings = $friendings ? $friendings->toArray() : [];
+
+        for($i = 0; $i<count($friendings); $i++){
+            $friendings[$i]['username'] = '';
+            $friendings[$i]['password'] = '';
+        }
+
+        return $friendings;
+    }
+
+    /**
      * 添加好友记录
      *    注意：申请好友记录，无论对方同意或拒绝都给予保留
      *

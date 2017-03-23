@@ -13,26 +13,13 @@ use App\Http\Models\Users;
 
 class UserService
 {
-    private $_file_id;
-    private $_filename;
-    private $_creator;
-    private $_content ='';
-    private $_type = 1;
-    private $_in_folder = 'desk';
 
     public function getUserInfo($uid)
     {
         //TODO Redis cache
-        $res = Users::where('id',$uid)->first();
+        $res = Users::select(['id as uid','username','picture'])
+            ->where('id',$uid)->first();
         return $res ? $res->toArray() : [];
     }
-
-    public function checkName($username)
-    {
-        $res = Users::where('username',$username)->first();
-        return $res ? true : false;
-    }
-
-
 
 }

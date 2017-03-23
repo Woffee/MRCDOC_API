@@ -50,4 +50,7 @@ $app->group([
     $app->get('/writers', 'WriterController@writers');
     $app->post('/writers', 'WriterController@createWriter');
     $app->delete('/writers', 'WriterController@deleteWriter');
+
+    /** 个人中心 */
+    $app->get('/user', 'UserController@index');
 });
