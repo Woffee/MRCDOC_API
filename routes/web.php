@@ -32,6 +32,10 @@ $app->group([
     $app->post('/files', 'FileController@createFile');
     $app->put('/files', 'FileController@updateFile');
 
+    /** 回收站 */
+    $app->get('/recycle', 'RecycleController@files');
+    $app->post('/restore', 'RecycleController@restore');
+
     /** 批量文件移动和删除 */
     $app->delete('/files', 'FileController@deleteFiles');
     $app->post('/files/move', 'FileController@moveFiles');

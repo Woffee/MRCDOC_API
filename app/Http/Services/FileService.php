@@ -94,6 +94,7 @@ class FileService
     {
         $file_id = Tools::generateID();
         $file = [
+            'uid'       => $this->_creator,
             'file_id'   => $file_id,
             'filename'  => $this->_filename,
             'creator'   => $this->_creator,
@@ -157,6 +158,23 @@ class FileService
             if(!empty($one)) $res []= $one;
         }
         return $res;
+    }
+
+    public function getRecycleFiles( $uid )
+    {
+        $files = Files::select(['file_id','filename','update_time'])
+            ->where('uid' , $uid)
+            ->where('status',1)
+            ->get();
+        return $files ? $files->toArray() : [];
+    }
+
+    public function restoreFile( $fileId, $uid )
+    {
+        return Files::where([
+            'uid'=>$uid,
+            'file_id'=>$fileId
+        ])->update(['status'=>0]);
     }
 
     /**
