@@ -40,7 +40,9 @@ class Authenticate
         $request->merge(['uid'=>$uid]);
         $request->merge(['token'=>$token]);
 
-        return $next($request);
+        $response = $next($request);
+        $response->header('Access-Control-Allow-Origin', '*');
+        return $response;
     }
 
     protected function error($message = '')
