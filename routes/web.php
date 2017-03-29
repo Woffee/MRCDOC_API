@@ -12,7 +12,7 @@
 */
 
 $app->get('/', function () use ($app) {
-    return $app->version();
+    return 'Welcome to API.MRCDOC :)';
 });
 
 /** 登录 注册 */
