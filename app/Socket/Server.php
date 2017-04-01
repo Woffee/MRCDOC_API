@@ -3,7 +3,6 @@
 namespace App\Socket;
 
 use App\Http\Models\Files;
-use App\Http\Models\Writers;
 use App\Http\Libraries\RedisKeys;
 use swoole_websocket_server;
 
@@ -29,8 +28,7 @@ class Server
         ]);
 
         $this->redis = new Redis();
-        $this->doc = new Docs();
-        $this->writers = new Writers();
+        //$this->writers = new Writers();
         //创建监听事件
         $this->socketServer->on('open', [$this, 'onOpen']);
         $this->socketServer->on('message', [$this, 'message']);

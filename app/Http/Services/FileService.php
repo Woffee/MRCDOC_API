@@ -17,7 +17,7 @@ class FileService
     private $_file_id;
     private $_filename;
     private $_creator;
-    private $_content ='';
+    private $_content ='{"ops":[{"insert":"\u0068\u0065\u006c\u006c\u006f\u002c\u0020\u8fd9\u662f\u4f60\u7684\u79c1\u6709\u0070\u0061\u0064\uff0c\u4f60\u53ef\u4ee5\u628a\u0075\u0072\u006c\u5206\u4eab\u7ed9\u4f60\u7684\u5c0f\u4f19\u4f34\n"}]}';
     private $_type = 1;
     private $_in_folder = 'desk';
 
