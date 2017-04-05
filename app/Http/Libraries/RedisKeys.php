@@ -16,22 +16,18 @@ class RedisKeys
 {
 
     /** 公共缓存有效期 **/
-    const CACHE_EXPIRED_TIME = 259200;
+    const CACHE_EXPIRED_TIME = 259200; //3600*24*3=259200
 
-    /** 临时文档IP-DOC_ID */
-    const DOC_TMP_DOC_ID = 'mrcdoc:doc:tmp:id:' ;
-
-    /** 客户端ID 对应的 UID */
-    const DOC_CLIENT_UID = 'mrcdoc:doc:client:uid:';
-
-    /** 某文档对应的登录的客户端ID */
-    const SET_DOC_CLIENTS = 'mrcdoc:doc:client:';
-
-    /** 所有登录的客户端ID */
-    const SET_ALL_CLIENTS = 'mrcdoc:all_clients';
+    /** 客户端ID */
+    const SET_CLIENTS_ONE = 'mrcdoc:clients:';
+    const SET_CLIENTS_ALL = 'mrcdoc:clients:all';
 
     /** 文档内容 */
-    const HASH_DOC_INFO = 'mrcdoc:doc:info:';
+    const HASH_DOC_INFO   = 'mrcdoc:doc:info:';
+    const HASH_DOC_CONTENT= 'mrcdoc:doc:content:';
+
+    /** 用户信息 */
+    const HASH_USER_INFO  = 'mrcdoc:user:info:';
 
     /** 用户 Token */
     const TOKEN = 'mrcdoc:token:';

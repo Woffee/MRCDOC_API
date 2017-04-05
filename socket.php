@@ -4,5 +4,5 @@ require 'vendor/autoload.php';
 
 use App\Socket\Server;
 
-$socket = new server();
+$socket = new Server();
 $socket->start();

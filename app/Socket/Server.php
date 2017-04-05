@@ -2,14 +2,11 @@
 
 namespace App\Socket;
 
-use App\Http\Models\Files;
 use App\Http\Libraries\RedisKeys;
 use swoole_websocket_server;
 
 class Server
 {
-    private $doc;
-    private $writers;
 
     private $socketServer;
 
@@ -48,7 +45,7 @@ class Server
                 break;
 
             case 'init':
-                $this->join($sender,$data->doc_id, $data->uid);
+                $this->join($sender,$data->doc_id);
                 break;
 
             case 'message':
@@ -64,14 +61,14 @@ class Server
 
     public function onOpen($socketServer, $request)
     {
-        echo "server: handshake success with fd {$request->fd}\n";
+        echo "MRCDOC server: handshake success with fd {$request->fd}\n";
     }
 
 
     public function onClose($socketServer, $fd)
     {
-        echo "server: client-{$fd} is closed.\n";
-        $key = RedisKeys::SET_ALL_CLIENTS;
+        echo "MRCDOC server: client-{$fd} is closed.\n";
+        $key = RedisKeys::SET_CLIENTS_ALL;
         $this->redis->getClient()->srem($key,$fd);
     }
 
@@ -99,16 +96,18 @@ class Server
         $message = '{"type":"message","delta":'.$delta.',"doc_id":"'.$docID.'"}';
 
         //获取当前正在编辑文档的客户端ＩＤ
-        $key = RedisKeys::SET_ALL_CLIENTS;
+        $key = RedisKeys::SET_CLIENTS_ALL;
         $allMembers = $this->redis->getClient()->smembers($key);
-        $key = RedisKeys::SET_DOC_CLIENTS.$docID;
+        $key = RedisKeys::SET_CLIENTS_ONE.$docID;
         $docMembers = $this->redis->getClient()->smembers($key);
         $docLoginMembers = array_intersect($allMembers,$docMembers);
 
         //更新文档内容
-        $key = RedisKeys::HASH_DOC_INFO.$docID;
+        $key = RedisKeys::HASH_DOC_CONTENT.$docID;
         $this->redis->getClient()->set($key, $content);
         $this->redis->getClient()->expire($key, RedisKeys::CACHE_EXPIRED_TIME);
+
+        //echo $content.'\n';
 
         foreach ($docLoginMembers as $member) {
             if ($member != $sender) {
@@ -117,15 +116,15 @@ class Server
         }
     }
 
-    public function join( $senderID, $docID, $uid  )
+    public function join( $senderID, $docID, $uid = 0  )
     {
-        $key = RedisKeys::SET_ALL_CLIENTS;
+        $key = RedisKeys::SET_CLIENTS_ALL;
         $arr = [];
         $arr[]=$senderID;
         $this->redis->getClient()->sadd($key,$arr);
         $this->redis->getClient()->expire($key, RedisKeys::CACHE_EXPIRED_TIME);
 
-        $key = RedisKeys::SET_DOC_CLIENTS.$docID;
+        $key = RedisKeys::SET_CLIENTS_ONE.$docID;
         $arr = [];
         $arr[]=$senderID;
         $this->redis->getClient()->sadd($key,$arr);
