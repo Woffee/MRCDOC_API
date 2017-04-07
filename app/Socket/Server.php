@@ -30,8 +30,8 @@ class Server
 
         $this->socketServer = new swoole_websocket_server($this->host, $this->port);
         $this->socketServer->set([
-            'worker_num' => 8,
-            'daemonize'  => false,
+            'worker_num' => 4,      //设置启动的worker进程数
+            'daemonize'  => 1,      //是否为守护进程
         ]);
 
         $this->redis = new Redis();
@@ -71,13 +71,13 @@ class Server
 
     public function onOpen($socketServer, $request)
     {
-        echo "MRCDOC server: handshake success with fd {$request->fd}\n";
+        //echo "MRCDOC server: handshake success with fd {$request->fd}\n";
     }
 
 
     public function onClose($socketServer, $fd)
     {
-        echo "MRCDOC server: client-{$fd} is closed.\n";
+        //echo "MRCDOC server: client-{$fd} is closed.\n";
         $key = RedisKeys::SET_CLIENTS_ALL;
         $this->redis->getClient()->srem($key,$fd);
     }
@@ -85,7 +85,7 @@ class Server
 
     public function start()
     {
-        echo 'MRCDOC server: Starting at '.$this->host.':'.$this->port;
+        //echo 'MRCDOC server: Starting at '.$this->host.':'.$this->port;
         $this->socketServer->start();
     }
 
