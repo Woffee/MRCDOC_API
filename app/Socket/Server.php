@@ -15,7 +15,7 @@ class Server
 
     public function __construct()
     {
-        $host = env('WEB_SOCKET_HOST','172.0.0.1');
+        $host = env('WEB_SOCKET_HOST','127.0.0.1');
         $port = env('WEB_SOCKET_PORT','3890');
         echo ($host.' '.$port);
         $this->socketServer = new swoole_websocket_server($host, $port);

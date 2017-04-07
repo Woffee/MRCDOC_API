@@ -17,7 +17,7 @@ class Redis
     public function __construct()
     {
         $single_server = [
-            'host' => env('REDIS_HOST','127.0.0.7'),
+            'host' => env('REDIS_HOST','127.0.0.1'),
             'port' => env('REDIS_PORT',6379),
             'database' => 0,
             'password' => env('REDIS_PASSWORD','123456'),
