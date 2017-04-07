@@ -4,6 +4,8 @@ namespace App\Socket;
 
 use App\Http\Libraries\RedisKeys;
 use swoole_websocket_server;
+use Dotenv\Dotenv;
+
 
 class Server
 {
@@ -12,13 +14,21 @@ class Server
 
     private $redis;
 
+    private $host;
+
+    private $port;
+
 
     public function __construct()
     {
-        $host = env('WEB_SOCKET_HOST','127.0.0.1');
-        $port = env('WEB_SOCKET_PORT','3890');
-        echo ($host.' '.$port);
-        $this->socketServer = new swoole_websocket_server($host, $port);
+        $dotenv = new Dotenv(__DIR__.'/../../');
+        $dotenv->load();
+
+        //$host = env('WEB_SOCKET_HOST','192.168.233.100');
+        $this->host = env('WEB_SOCKET_HOST','127.0.0.1');
+        $this->port = env('WEB_SOCKET_PORT','3890');
+
+        $this->socketServer = new swoole_websocket_server($this->host, $this->port);
         $this->socketServer->set([
             'worker_num' => 8,
             'daemonize'  => false,
@@ -75,6 +85,7 @@ class Server
 
     public function start()
     {
+        echo 'MRCDOC server: Starting at '.$this->host.':'.$this->port;
         $this->socketServer->start();
     }
 
