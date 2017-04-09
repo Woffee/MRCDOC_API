@@ -2,6 +2,12 @@
 
 require_once __DIR__.'/../vendor/autoload.php';
 
+
+/*
+|--------------------------------------------------------------------------
+| 加载.env配置文件
+|--------------------------------------------------------------------------
+*/
 try {
     (new Dotenv\Dotenv(__DIR__.'/../'))->load();
 } catch (Dotenv\Exception\InvalidPathException $e) {

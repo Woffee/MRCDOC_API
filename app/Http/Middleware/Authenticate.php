@@ -41,7 +41,6 @@ class Authenticate
         $request->merge(['token'=>$token]);
 
         $response = $next($request);
-        //$response->header('Access-Control-Allow-Origin', '*');
         return $response;
     }
 

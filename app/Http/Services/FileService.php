@@ -8,8 +8,11 @@
 
 namespace App\Http\Services;
 
+use App\Http\Controllers\UserController;
 use App\Http\Models\Files;
+use App\Http\Services\UserService;
 use App\Http\Libraries\Tools;
+use function FastRoute\TestFixtures\empty_options_cached;
 use Illuminate\Http\File;
 
 class FileService
@@ -74,13 +77,16 @@ class FileService
 
         $files =  $files ? $files->toArray() : [];
         $res = [];
+        $userService = new UserService();
         foreach ($files as $file){
+            $userInfo = $userService->getUserInfo($file['creator']);
+            if(empty($userInfo['picture']))$userInfo['picture'] = 'https://pic2.zhimg.com/33a85ab39e985ab6823ad93de0b826f5_im.jpg';
             $res []= [
                 'file_id'         =>$file['file_id'],
                 'filename'        =>$file['filename'],
                 'creator_id'      =>$file['creator'],
-                'creator_name'    =>'',
-                'creator_picture' =>'',
+                'creator_name'    =>$userInfo['username'],
+                'creator_picture' =>$userInfo['picture'],
                 'type'            =>$file['type'],
                 'content'         =>$file['content'],
                 'create_time'     =>Tools::human_time_diff($file['create_time']),
