@@ -57,4 +57,8 @@ $app->group([
 
     /** 个人中心 */
     $app->get('/user', 'UserController@index');
+
+    /** 收藏文件 */
+    $app->get('/stars', 'StarController@starFilesList');
+    $app->post('/stars', 'StarController@starFile');
 });

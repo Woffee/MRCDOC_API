@@ -10,7 +10,7 @@ namespace App\Http\Services;
 
 use App\Http\Controllers\UserController;
 use App\Http\Models\Files;
-use App\Http\Services\UserService;
+use App\Http\Services\StarService;
 use App\Http\Libraries\Tools;
 use function FastRoute\TestFixtures\empty_options_cached;
 use Illuminate\Http\File;
@@ -88,7 +88,7 @@ class FileService
                 'creator_name'    =>$userInfo['username'],
                 'creator_picture' =>$userInfo['picture'],
                 'type'            =>$file['type'],
-                'is_star'         =>false,
+                'is_star'         =>StarService::isStar($file['creator'],$file['file_id']),
                 'content'         =>$file['content'],
                 'create_time'     =>Tools::human_time_diff($file['create_time']),
                 'update_time'     =>Tools::human_time_diff($file['update_time']),
