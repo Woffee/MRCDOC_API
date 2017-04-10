@@ -169,11 +169,29 @@ class FileService
 
     public function getRecycleFiles( $uid )
     {
-        $files = Files::select(['file_id','filename','update_time'])
+        $files = Files::select(['file_id','filename','creator','type','update_time'])
             ->where('uid' , $uid)
             ->where('status',1)
             ->get();
-        return $files ? $files->toArray() : [];
+        $files =  $files ? $files->toArray() : [];
+
+        $res = [];
+        $userService = new UserService();
+        foreach ($files as $file){
+            $userInfo = $userService->getUserInfo($file['creator']);
+            if(empty($userInfo['picture']))$userInfo['picture'] = 'https://pic2.zhimg.com/33a85ab39e985ab6823ad93de0b826f5_im.jpg';
+            $res []= [
+                'file_id'         =>$file['file_id'],
+                'filename'        =>$file['filename'],
+                'creator_id'      =>$file['creator'],
+                'creator_name'    =>$userInfo['username'],
+                'creator_picture' =>$userInfo['picture'],
+                'type'            =>$file['type'],
+                'is_star'         =>StarService::isStar($file['creator'],$file['file_id']),
+                'update_time'     =>Tools::human_time_diff($file['update_time']),
+            ];
+        }
+        return $res;
     }
 
     public function restoreFile( $fileId, $uid )
