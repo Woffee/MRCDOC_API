@@ -184,6 +184,40 @@ class FileService
         ])->update(['status'=>0]);
     }
 
+    public function getRecentFiles($uid = 0)
+    {
+        $files = Files::where([
+            'uid'=>$uid,
+            'status'=>0,
+        ])->orderBy('update_time','DESC')->take(10)->get();
+        $files =  $files ? $files->toArray() : [];
+
+        $res = [];
+        $userService = new UserService();
+        foreach ($files as $file){
+            $userInfo = $userService->getUserInfo($file['creator']);
+            if(empty($userInfo['picture']))$userInfo['picture'] = 'https://pic2.zhimg.com/33a85ab39e985ab6823ad93de0b826f5_im.jpg';
+            $res []= [
+                'file_id'         =>$file['file_id'],
+                'filename'        =>$file['filename'],
+                'creator_id'      =>$file['creator'],
+                'creator_name'    =>$userInfo['username'],
+                'creator_picture' =>$userInfo['picture'],
+                'type'            =>$file['type'],
+                'is_star'         =>StarService::isStar($file['creator'],$file['file_id']),
+                'content'         =>$file['content'],
+                'create_time'     =>Tools::human_time_diff($file['create_time']),
+                'update_time'     =>Tools::human_time_diff($file['update_time']),
+            ];
+        }
+        return $res;
+    }
+
+
+
+
+
+
     /**
      * @return mixed
      */

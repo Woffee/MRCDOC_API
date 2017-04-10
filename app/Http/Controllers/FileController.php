@@ -200,4 +200,20 @@ class FileController extends Controller
         return $this->success();
     }
 
+    public function recentFiles(Request $request)
+    {
+        $inputs = $request->only('uid');
+        $validator = app('validator')->make($inputs,[
+            'uid'        =>    'required|integer'
+        ],['required' => ':attribute不能为空']);
+        if ($validator->fails()) return $this->error($validator->errors()->all());
+
+        $uid = (int)$inputs['uid'];
+
+        $fileService = new FileService();
+        $files = $fileService->getRecentFiles($uid);
+
+        return $this->success(['recent_files'=>$files]);
+    }
+
 }

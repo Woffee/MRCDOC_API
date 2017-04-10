@@ -32,6 +32,9 @@ $app->group([
     $app->post('/files', 'FileController@createFile');
     $app->put('/files', 'FileController@updateFile');
 
+    /** 最近编辑文件 */
+    $app->get('/recent', 'FileController@recentFiles');
+
     /** 回收站 */
     $app->get('/recycle', 'RecycleController@files');
     $app->post('/restore', 'RecycleController@restore');
