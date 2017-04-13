@@ -242,11 +242,30 @@ class FileService
                 'type'            =>$file['type'],
                 'is_star'         =>StarService::isStar($file['creator'],$file['file_id']),
                 'content'         =>$file['content'],
-                'create_time'     =>Tools::human_time_diff($file['create_time']),
-                'update_time'     =>Tools::human_time_diff($file['update_time']),
+                'update_time'     =>$file['update_time'],
+                'update_time_fmt' =>Tools::human_time_diff($file['update_time']),
+                'update_time_day' =>date('m/d',$file['update_time']),
             ];
         }
-        return $res;
+
+        $len = count($res);
+        $res2 = [];
+        $i = 0;
+        while($i<$len){
+            $date = $res[$i]['update_time_day'];
+            $files = [];
+
+            while( $i<$len &&  $res[$i]['update_time_day'] == $date ){
+                $files   []=   $res[$i];
+                $i++;
+            }
+
+            $res2 []= [
+                'date' =>$date,
+                'files'=>$files,
+            ];
+        }
+        return $res2;
     }
 
 
