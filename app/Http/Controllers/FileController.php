@@ -114,6 +114,10 @@ class FileController extends Controller
         $fileService->setType($type);
         $file_id = $fileService->createFileGetId();
 
+        if( !$fileService->checkOwnFolder($uid,$inFolder) ){
+            return $this->error('创建文件失败：当前文件夹不存在');
+        }
+
         if( empty($file_id) ){
             return $this->error('创建文件失败');
         }

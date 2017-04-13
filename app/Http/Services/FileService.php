@@ -33,6 +33,23 @@ class FileService
         ])->exists();
     }
 
+    /**
+     * 检查文件夹是否存在 以及 是否拥有该文件夹权限
+     * @param $uid
+     * @param $fileId
+     * @return bool
+     */
+    public function checkOwnFolder( $uid , $fileId  )
+    {
+        if( 'desk'== $fileId )return true;
+
+        return Files::where([
+            'uid'=>$uid,
+            'file_id'=>$fileId,
+            'status' =>0,
+        ])->exists();
+    }
+
     public function getFileInfo($uid,$fileId)
     {
         $file = Files::where('file_id',$fileId)
