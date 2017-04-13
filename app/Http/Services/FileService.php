@@ -223,6 +223,7 @@ class FileService
     {
         $files = Files::where([
             'uid'=>$uid,
+            'type'=>1,
             'status'=>0,
         ])->orderBy('update_time','DESC')->take(10)->get();
         $files =  $files ? $files->toArray() : [];
