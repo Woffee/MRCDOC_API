@@ -160,7 +160,10 @@ class FriendService
 
     public function searchFriend($search)
     {
-        $friends = Users::select(['uid', 'username', 'picture'])->where('username', 'like', '%' . $search . '%');
+        $friends = Users::select(['id as uid', 'username', 'picture'])
+            ->where('username', 'like', '%' . $search . '%')
+            ->take(10)
+            ->get();
         $friends = $friends ? $friends->toArray() : [];
         return $friends;
     }
