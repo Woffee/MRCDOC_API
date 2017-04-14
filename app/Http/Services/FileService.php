@@ -174,6 +174,16 @@ class FileService
         return $res ? true : false;
     }
 
+    public function destroyFile($uid=0, $fileId='')
+    {
+        $res =  Files::where('creator',$uid)
+            ->where([
+                'file_id' => $fileId,
+                'status'  => 1
+            ])->update(['status'=> 2]);
+        return $res ? true : false;
+    }
+
     public function explodeFileIds($strFileIds)
     {
         $arr = explode(',',$strFileIds);

@@ -33,15 +33,14 @@ class Authenticate
 
         $redis = (new Redis())->getClient();
         $keys = RedisKeys::TOKEN.$uid;
-        if( $token != $redis->get($keys) ){
+        if( !env('APP_DEBUG') && $token != $redis->get($keys) ){
             return $this->error('token 验证失败');
         }
 
         $request->merge(['uid'=>$uid]);
         $request->merge(['token'=>$token]);
 
-        $response = $next($request);
-        return $response;
+        return $next($request);
     }
 
     protected function error($message = '')

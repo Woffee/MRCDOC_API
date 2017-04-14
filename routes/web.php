@@ -40,8 +40,9 @@ $app->group([
     $app->post('/restore', 'RecycleController@restore');
 
     /** 批量文件移动和删除 */
-    $app->delete('/files', 'FileController@deleteFiles');
     $app->post('/files/move', 'FileController@moveFiles');
+    $app->delete('/files', 'FileController@deleteFiles');
+    $app->delete('/files/destroy/{fileId}', 'FileController@destroyFiles');
 
     /** 退出登录 */
     $app->get('/logout', 'AuthController@logout');
