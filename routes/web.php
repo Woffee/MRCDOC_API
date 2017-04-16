@@ -65,4 +65,9 @@ $app->group([
     /** 收藏文件 */
     $app->get('/stars', 'StarController@starFilesList');
     $app->post('/stars', 'StarController@starFile');
+
+    /** 评论 */
+    $app->get('/comments/{fileId}', 'CommentController@commentList');
+    $app->post('/comments', 'CommentController@createComment');
+    $app->delete('/comments/{cid}', 'CommentController@deleteComment');
 });
