@@ -58,9 +58,14 @@ class FileController extends Controller
         $page = isset($inputs['page']) ? $inputs['page'] : 1;
         $pagesize = isset($inputs['pagesize']) ? $inputs['pagesize'] : 10;
 
+        //xhprof_enable();
+
         $fileService = new FileService();
         $count = $fileService->getFilesCountInFolder($uid,'desk');
         $files = $fileService->getFilesByFolderId($uid,'desk',$page,$pagesize);
+
+        //$xhprof_data = xhprof_disable();
+        //dd($xhprof_data);
 
         return $this->success(['count'=>$count,'files'=>$files]);
     }

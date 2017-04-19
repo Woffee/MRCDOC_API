@@ -12,6 +12,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Models\Files;
 use App\Http\Services\StarService;
 use App\Http\Libraries\Tools;
+use App\Http\Models\Redis;
+use App\Http\Libraries\RedisKeys;
 use function FastRoute\TestFixtures\empty_options_cached;
 use Illuminate\Http\File;
 
@@ -57,7 +59,14 @@ class FileService
             ->where('status' , 0)
             ->where('type','<>', 0)
             ->first();
-        $file = $file ? $file->toArray() : [];
+        if( empty($file) )return [];
+
+        $file = $file->toArray() ;
+
+        $redis = new Redis();
+        $redisClient = $redis->getClient();
+        $key = RedisKeys::HASH_DOC_CONTENT.$fileId;
+        $content = $redisClient->get($key);
 
         return [
              'file_id'         =>$file['file_id'],
@@ -66,7 +75,7 @@ class FileService
              'creator_name'    =>'',
              'creator_picture' =>'',
              'type'            =>$file['type'],
-             'content'         =>$file['content'],
+             'content'         =>$content,
              'create_time'     =>Tools::human_time_diff($file['create_time']),
              'update_time'     =>Tools::human_time_diff($file['update_time']),
         ];
