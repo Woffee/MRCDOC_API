@@ -54,11 +54,11 @@ class WriterController extends Controller
      */
     public function createWriter(Request $request)
     {
-        $inputs = $request->only('uid','file_id','writer_id');
+        $inputs = $request->only('uid','file_id','writer_ids');
         $validator = app('validator')->make($inputs, [
             'uid'        => 'required',
             'file_id'    => 'required',
-            'writer_id'  => 'required',
+            'writer_ids'  => 'required',
         ], ['required' => ':attribute 不能为空']);
         if ($validator->fails()) {
             return $this->error($validator->errors()->all());
@@ -66,31 +66,27 @@ class WriterController extends Controller
 
         $uid = (int)$inputs['uid'];
         $fileId = $inputs['file_id'];
-        $writerId = $inputs['writer_id'];
+        $writerIds = $inputs['writer_ids'];
 
         $writerService = new WriterService();
-        if( $writerService->isWriter($fileId,$writerId) ){
-            return $this->error('该用户已经是协作者了');
-        }
-
         $fileService = new FileService();
+        $friendService = new FriendService();
+
         if( !$fileService->isCreator($fileId,$uid) ){
             return $this->error('权限不够：您不是该文档的创建者');
         }
 
-        $isFriends = (new FriendService())->isFriends($uid,$writerId);
-        if( !$isFriends ){
-            return $this->error('权限不够：您和TA不是好友关系');
-        }
-
-
-        $res = $writerService->createWriter($fileId,$writerId);
-
         $fileInfo = $fileService->getFileBaseInfo($fileId);
-        $res2 = $fileService->createFileOfWriter($writerId,$fileInfo);
-        if( !$res || !$res2 ){
-            return $this->error('创建失败');
+
+        $wids = $this->explodeUids($writerIds);
+        foreach ($wids as $wid){
+            if( $writerService->isWriter($fileId,$wid) )continue;
+            if( $friendService->isFriends( $uid,$wid ) )continue;
+
+            $writerService->createWriter($fileId,$wid);
+            $fileService->createFileOfWriter($wid,$fileInfo);
         }
+
 
         return $this->success();
     }
@@ -129,5 +125,17 @@ class WriterController extends Controller
         }
 
         return $this->success();
+    }
+
+
+
+    public function explodeUids($strUids)
+    {
+        $arr = explode(',',$strUids);
+        $res = [];
+        foreach ($arr as $one) {
+            if(!empty($one)) $res []= $one;
+        }
+        return $res;
     }
 }
