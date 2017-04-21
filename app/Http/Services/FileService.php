@@ -10,7 +10,7 @@ namespace App\Http\Services;
 
 use App\Http\Controllers\UserController;
 use App\Http\Models\Files;
-use App\Http\Services\StarService;
+use App\Http\Services\UserService;
 use App\Http\Libraries\Tools;
 use App\Http\Models\Redis;
 use App\Http\Libraries\RedisKeys;
@@ -52,6 +52,31 @@ class FileService
         ])->exists();
     }
 
+    public function getFileBaseInfo($fileId)
+    {
+        $file = Files::select(['file_id','filename','creator','type','update_time'])
+            ->where('file_id',$fileId)
+            ->where('status' , 0)
+            ->where('type','<>', 0)
+            ->first();
+        if( empty($file) )return [];
+
+        $file = $file->toArray() ;
+
+        $userService = new UserService();
+        $userInfo = $userService->getUserInfo($file['creator']);
+
+        return [
+            'file_id'         =>$file['file_id'],
+            'filename'        =>$file['filename'],
+            'creator_id'      =>$file['creator'],
+            'creator_name'    =>$userInfo['username'],
+            'creator_picture' =>$userInfo['picture'],
+            'type'            =>$file['type'],
+            'update_time'     =>Tools::human_time_diff($file['update_time']),
+        ];
+    }
+
     public function getFileInfo($uid,$fileId)
     {
         $file = Files::where('file_id',$fileId)
@@ -68,12 +93,15 @@ class FileService
         $key = RedisKeys::HASH_DOC_CONTENT.$fileId;
         $content = $redisClient->get($key);
 
+        $userService = new UserService();
+        $userInfo = $userService->getUserInfo($file['creator']);
+
         return [
              'file_id'         =>$file['file_id'],
              'filename'        =>$file['filename'],
              'creator_id'      =>$file['creator'],
-             'creator_name'    =>'',
-             'creator_picture' =>'',
+             'creator_name'    =>$userInfo['username'],
+             'creator_picture' =>$userInfo['picture'],
              'type'            =>$file['type'],
              'content'         =>$content,
              'create_time'     =>Tools::human_time_diff($file['create_time']),
@@ -115,7 +143,7 @@ class FileService
                 'creator_picture' =>$userInfo['picture'],
                 'type'            =>$file['type'],
                 'is_star'         =>StarService::isStar($file['creator'],$file['file_id']),
-                'content'         =>$file['content'],
+                //'content'         =>$file['content'],
                 'create_time'     =>Tools::human_time_diff($file['create_time']),
                 'update_time'     =>Tools::human_time_diff($file['update_time']),
             ];
@@ -131,7 +159,7 @@ class FileService
             'file_id'   => $file_id,
             'filename'  => $this->_filename,
             'creator'   => $this->_creator,
-            'content'   => $this->_content,
+            //'content'   => $this->_content,
             'type'      => $this->_type,
             'in_folder' => $this->_in_folder,
             'create_time' => time(),
@@ -141,12 +169,27 @@ class FileService
         return $res ? $file_id : '';
     }
 
+    public function createFileOfWriter($uid, $fileInfo)
+    {
+        $file = [
+            'uid'       => $uid,
+            'file_id'   => $fileInfo['file_id'],
+            'filename'  => $fileInfo['filename'],
+            'creator'   => $fileInfo['creator_id'],
+            //'content'   => $this->_content,
+            'type'      => 1,
+            'in_folder' => 'desk',
+            'create_time' => time(),
+            'update_time' => time(),
+        ];
+        return Files::insert($file);
+    }
+
     public function updateFile()
     {
         $file = [
             'filename'  => $this->_filename,
             'creator'   => $this->_creator,
-            'content'   => $this->_content,
             'update_time' => time(),
         ];
         $res =  Files::where('file_id', $this->_file_id )
@@ -215,7 +258,7 @@ class FileService
         $userService = new UserService();
         foreach ($files as $file){
             $userInfo = $userService->getUserInfo($file['creator']);
-            if(empty($userInfo['picture']))$userInfo['picture'] = 'https://pic2.zhimg.com/33a85ab39e985ab6823ad93de0b826f5_im.jpg';
+            //if(empty($userInfo['picture']))$userInfo['picture'] = 'https://pic2.zhimg.com/33a85ab39e985ab6823ad93de0b826f5_im.jpg';
             $res []= [
                 'file_id'         =>$file['file_id'],
                 'filename'        =>$file['filename'],
@@ -251,7 +294,7 @@ class FileService
         $userService = new UserService();
         foreach ($files as $file){
             $userInfo = $userService->getUserInfo($file['creator']);
-            if(empty($userInfo['picture']))$userInfo['picture'] = 'https://pic2.zhimg.com/33a85ab39e985ab6823ad93de0b826f5_im.jpg';
+            //if(empty($userInfo['picture']))$userInfo['picture'] = 'https://pic2.zhimg.com/33a85ab39e985ab6823ad93de0b826f5_im.jpg';
             $res []= [
                 'file_id'         =>$file['file_id'],
                 'filename'        =>$file['filename'],

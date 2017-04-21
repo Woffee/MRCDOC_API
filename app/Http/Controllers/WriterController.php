@@ -80,7 +80,10 @@ class WriterController extends Controller
 
         $writerService = new WriterService();
         $res = $writerService->createWriter($fileId,$writerId);
-        if( !$res ){
+
+        $fileInfo = $fileService->getFileBaseInfo($fileId);
+        $res2 = $fileService->createFileOfWriter($writerId,$fileInfo);
+        if( !$res || !$res2 ){
             return $this->error('创建失败');
         }
 

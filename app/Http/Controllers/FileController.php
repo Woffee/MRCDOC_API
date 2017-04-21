@@ -143,20 +143,17 @@ class FileController extends Controller
             'uid'        =>    'required|integer',
             'file_id'    =>    'required',
             'filename'   =>    'required',
-            'content'    =>    'required',
         ],['required' => ':attribute不能为空']);
         if ($validator->fails()) return $this->error($validator->errors()->all());
 
         $uid = (int)$inputs['uid'];
         $file_id  = $inputs['file_id'];
         $filename = $inputs['filename'];
-        $content  = $inputs['filename'];
 
         $fileService = new FileService();
         $fileService->setCreator($uid);
         $fileService->setFileId($file_id);
         $fileService->setFilename($filename);
-        $fileService->setContent($content);
 
         $res = $fileService->updateFile();
         if( empty($res) ){

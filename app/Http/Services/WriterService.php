@@ -9,6 +9,7 @@
 namespace App\Http\Services;
 
 use App\Http\Models\Writers;
+use App\Http\Services\UserService;
 
 class WriterService
 {
@@ -29,9 +30,12 @@ class WriterService
             'is_del'=>0,
         ])->get();
         $writers = $writers ? $writers->toArray() : [];
+        $userService = new UserService();
+
         for($i=0; $i<count($writers); $i++){
-            $writers[$i]['writer_name'] = '';
-            $writers[$i]['writer_picture']  = '';
+            $userInfo = $userService->getUserInfo($writers[$i]['writer_id']);
+            $writers[$i]['writer_name'] = $userInfo['username'];
+            $writers[$i]['writer_picture']  = $userInfo['picture'];
         }
         return $writers;
     }
