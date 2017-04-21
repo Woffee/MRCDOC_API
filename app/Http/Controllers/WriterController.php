@@ -68,6 +68,11 @@ class WriterController extends Controller
         $fileId = $inputs['file_id'];
         $writerId = $inputs['writer_id'];
 
+        $writerService = new WriterService();
+        if( $writerService->isWriter($fileId,$writerId) ){
+            return $this->error('该用户已经是协作者了');
+        }
+
         $fileService = new FileService();
         if( !$fileService->isCreator($fileId,$uid) ){
             return $this->error('权限不够：您不是该文档的创建者');
@@ -78,7 +83,7 @@ class WriterController extends Controller
             return $this->error('权限不够：您和TA不是好友关系');
         }
 
-        $writerService = new WriterService();
+
         $res = $writerService->createWriter($fileId,$writerId);
 
         $fileInfo = $fileService->getFileBaseInfo($fileId);

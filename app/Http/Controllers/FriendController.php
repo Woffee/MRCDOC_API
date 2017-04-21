@@ -69,6 +69,11 @@ class FriendController extends Controller
         $fid = (int)$inputs['fid'];
 
         $friendService = new FriendService();
+
+        if($friendService->isFriends($uid, $fid)){
+            return $this->error('你们已经是好友关系');
+        }
+
         $friendService->setFromUid( $uid );
         $friendService->setToUid( $fid );
         $friendService->setStatus( 0 );
