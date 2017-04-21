@@ -16,6 +16,11 @@ use App\Http\Models\Friends;
 
 class FriendController extends Controller
 {
+    /**
+     * 我的好友列表
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function index(Request $request)
     {
         $inputs = $request->only('uid');
@@ -35,6 +40,12 @@ class FriendController extends Controller
         return $this->success( ['friends'=>$friends] );
     }
 
+    /**
+     * Search friends by user name
+     *
+     * @param $search
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function searchFriend( $search )
     {
         $friendService = new FriendService();

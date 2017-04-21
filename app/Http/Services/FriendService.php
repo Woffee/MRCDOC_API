@@ -67,9 +67,11 @@ class FriendService
             ->get();
         $friendings = $friendings ? $friendings->toArray() : [];
 
+        $userService = new UserService();
         for($i = 0; $i<count($friendings); $i++){
-            $friendings[$i]['username'] = '';
-            $friendings[$i]['password'] = '';
+            $userInfo = $userService->getUserInfo( $friendings[$i]['uid'] );
+            $friendings[$i]['username'] = $userInfo['username'];
+            $friendings[$i]['picture'] = $userInfo['picture'];
         }
 
         return $friendings;
