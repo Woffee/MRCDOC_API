@@ -106,7 +106,7 @@ class FileService
         $userService = new UserService();
         foreach ($files as $file){
             $userInfo = $userService->getUserInfo($file['creator']);
-            if(empty($userInfo['picture']))$userInfo['picture'] = 'https://pic2.zhimg.com/33a85ab39e985ab6823ad93de0b826f5_im.jpg';
+            //if(empty($userInfo['picture']))$userInfo['picture'] = 'https://pic2.zhimg.com/33a85ab39e985ab6823ad93de0b826f5_im.jpg';
             $res []= [
                 'file_id'         =>$file['file_id'],
                 'filename'        =>$file['filename'],

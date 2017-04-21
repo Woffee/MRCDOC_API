@@ -93,6 +93,7 @@ class AuthController extends Controller
         $user = [
             'username' => $username,
             'password' => $password,
+            'picture' => 'https://pic2.zhimg.com/33a85ab39e985ab6823ad93de0b826f5_im.jpg',
             'register_ip' => $request->ip(),
             'create_time'=>time(),
             'update_time'=>time(),
