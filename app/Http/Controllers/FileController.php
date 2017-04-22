@@ -206,7 +206,7 @@ class FileController extends Controller
         return $this->success();
     }
 
-    public function destroyFiles($fileId,Request $request)
+    public function destroyFiles($fileIds,Request $request)
     {
         $inputs = $request->only('uid');
         $validator = app('validator')->make($inputs,[
@@ -215,11 +215,11 @@ class FileController extends Controller
         if ($validator->fails()) return $this->error($validator->errors()->all());
 
         $uid = (int)$inputs['uid'];
-        $fileId = !empty($fileId) ? $fileId : '';
+        $fileIds = !empty($fileIds) ? $fileIds : '';
 
         $fileService = new FileService();
 
-        if( !$fileService->destroyFile($uid,$fileId)  ){
+        if( !$fileService->destroyFile($uid,$fileIds)  ){
             return $this->error('彻底删除失败：文件不存在或已被彻底删除');
         }
         return $this->success();
