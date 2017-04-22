@@ -206,16 +206,17 @@ class FileController extends Controller
         return $this->success();
     }
 
-    public function destroyFiles($fileIds,Request $request)
+    public function destroyFiles(Request $request)
     {
-        $inputs = $request->only('uid');
+        $inputs = $request->only('uid','file_ids');
         $validator = app('validator')->make($inputs,[
             'uid'       =>    'required|integer',
+            'file_ids'  =>    'required',
         ],['required' => ':attribute不能为空']);
         if ($validator->fails()) return $this->error($validator->errors()->all());
 
         $uid = (int)$inputs['uid'];
-        $fileIds = !empty($fileIds) ? $fileIds : '';
+        $fileIds = !empty($inputs['file_ids']) ? $inputs['file_ids'] : '';
 
         $fileService = new FileService();
 
