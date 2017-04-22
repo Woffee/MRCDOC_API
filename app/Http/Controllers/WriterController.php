@@ -81,7 +81,9 @@ class WriterController extends Controller
         $wids = $this->explodeUids($writerIds);
         $num=0;
         foreach ($wids as $wid){
-            if( !$writerService->isWriter($fileId,$wid) )continue;
+            //如果已经是协作者，跳过
+            if( $writerService->isWriter($fileId,$wid) )continue;
+            //如果不是朋友关系，跳过
             if( !$friendService->isFriends( $uid,$wid ) )continue;
             $num++;
             $writerService->createWriter($fileId,$wid);
