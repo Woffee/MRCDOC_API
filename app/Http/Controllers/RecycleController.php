@@ -44,18 +44,18 @@ class RecycleController extends Controller
      */
     public function restore( Request $request)
     {
-        $inputs = $request->only('uid','file_id');
+        $inputs = $request->only('uid','file_ids');
         $validator = app('validator')->make($inputs,[
             'uid'       =>    'required|integer',
-            'file_id'   =>    'required',
+            'file_ids'   =>    'required',
         ],['required' => ':attribute不能为空']);
         if ($validator->fails()) return $this->error($validator->errors()->all());
 
         $uid = (int)$inputs['uid'];
-        $fileId = $inputs['file_id'];
+        $fileIds = $inputs['file_ids'];
 
         $fileService = new FileService();
-        $res = $fileService->restoreFile($fileId,$uid);
+        $res = $fileService->restoreFile($fileIds,$uid);
 
         if( !$res ){
             return $this->error('还原失败');

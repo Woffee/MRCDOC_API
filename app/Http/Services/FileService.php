@@ -209,7 +209,7 @@ class FileService
             return false;
         }
 
-        $res =  Files::where('creator',$uid)
+        $res =  Files::where('uid',$uid)
             ->where('status' , 0)
             ->whereIn('file_id', $fileIds )
             ->update(['in_folder'=>$moveTo]);
@@ -220,7 +220,7 @@ class FileService
     {
         $fileIds = $this->explodeFileIds($strFileIds);
 
-        $res =  Files::where('creator',$uid)
+        $res =  Files::where('uid',$uid)
             ->whereIn('file_id', $fileIds )
             ->update(['status'=> 1]);
         return $res ? true : false;
@@ -230,7 +230,7 @@ class FileService
     {
         $fileIds = $this->explodeFileIds($strFileIds);
 
-        $res =  Files::where('creator',$uid)
+        $res =  Files::where('uid',$uid)
             ->whereIn('file_id', $fileIds )
             ->update(['status'=> 2]);
         return $res ? true : false;
@@ -273,12 +273,14 @@ class FileService
         return $res;
     }
 
-    public function restoreFile( $fileId, $uid )
+    public function restoreFile( $strFileIds, $uid )
     {
-        return Files::where([
-            'uid'=>$uid,
-            'file_id'=>$fileId
-        ])->update(['status'=>0]);
+        $fileIds = $this->explodeFileIds($strFileIds);
+
+        $res =  Files::where('creator',$uid)
+            ->whereIn('file_id', $fileIds )
+            ->update(['status'=> 0]);
+        return $res ? true : false;
     }
 
     public function getRecentFiles($uid = 0)
