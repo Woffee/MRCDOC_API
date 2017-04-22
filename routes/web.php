@@ -42,7 +42,7 @@ $app->group([
     /** 批量文件移动和删除 */
     $app->post('/files/move', 'FileController@moveFiles');
     $app->delete('/files', 'FileController@deleteFiles');
-    $app->delete('/files/destroy/{fileId}', 'FileController@destroyFiles');
+    $app->delete('/files/destroy', 'FileController@destroyFiles');
 
     /** 退出登录 */
     $app->get('/logout', 'AuthController@logout');
