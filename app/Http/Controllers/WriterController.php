@@ -79,16 +79,17 @@ class WriterController extends Controller
         $fileInfo = $fileService->getFileBaseInfo($fileId);
 
         $wids = $this->explodeUids($writerIds);
+        $num=0;
         foreach ($wids as $wid){
             if( $writerService->isWriter($fileId,$wid) )continue;
             if( $friendService->isFriends( $uid,$wid ) )continue;
-
+            $num++;
             $writerService->createWriter($fileId,$wid);
             $fileService->createFileOfWriter($wid,$fileInfo);
         }
 
 
-        return $this->success();
+        return $this->success(['count'=>$num]);
     }
 
     /**

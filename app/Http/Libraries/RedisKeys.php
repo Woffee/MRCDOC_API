@@ -31,4 +31,8 @@ class RedisKeys
 
     /** 用户 Token */
     const TOKEN = 'mrcdoc:token:';
+
+    /** 通知 */
+    const LIST_NOTICES_OLD = 'mrcdoc:notices:old:';
+    const LIST_NOTICES_NEW = 'mrcdoc:notices:new:';
 }
