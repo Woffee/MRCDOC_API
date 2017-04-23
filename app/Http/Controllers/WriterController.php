@@ -12,7 +12,8 @@ use Illuminate\Http\Request;
 use App\Http\Services\FileService;
 use App\Http\Services\WriterService;
 use App\Http\Services\FriendService;
-use App\Http\Models\Writers;
+use App\Http\Services\UserService;
+use App\Http\Services\NoticeService;
 
 class WriterController extends Controller
 {
@@ -77,6 +78,9 @@ class WriterController extends Controller
         }
 
         $fileInfo = $fileService->getFileBaseInfo($fileId);
+        $noticeService = new NoticeService();
+        $userService = new UserService();
+        $userInfo = $userService->getUserInfo($uid);
 
         $wids = $this->explodeUids($writerIds);
         $num=0;
@@ -88,6 +92,19 @@ class WriterController extends Controller
             $num++;
             $writerService->createWriter($fileId,$wid);
             $fileService->createFileOfWriter($wid,$fileInfo);
+
+            //通知
+            $notice = [
+                'type'=>0,
+                'message'=>$userInfo['username'].'添加你为协作者',
+                'from_uid'=>$uid,
+                'from_username'=>$userInfo['username'],
+                'from_picture'=>$userInfo['picture'],
+                'file_id'=>$fileId,
+                'filename'=>$fileInfo['filename'],
+                'create_time'=>time(),
+            ];
+            $noticeService->insertNotice($wid, $notice);
         }
 
 

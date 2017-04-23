@@ -10,9 +10,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Services\FriendService;
-use App\Http\Models\Users;
-use App\Http\Models\Friending;
-use App\Http\Models\Friends;
+use App\Http\Services\UserService;
+use App\Http\Services\NoticeService;
 
 class FriendController extends Controller
 {
@@ -82,6 +81,22 @@ class FriendController extends Controller
         if( !$res ){
             return $this->error('添加好友失败');
         }
+
+        $userService = new UserService();
+        $userInfo = $userService->getUserInfo($uid);
+
+        //向被申请人发出通知
+        $noticeService = new NoticeService();
+        $notice = [
+            'type'=>0,
+            'message'=>$userInfo['username'].'申请你为好友',
+            'from_uid'=>$uid,
+            'from_username'=>$userInfo['username'],
+            'from_picture'=>$userInfo['picture'],
+            'create_time'=>time(),
+        ];
+        $noticeService->insertNotice($fid, $notice);
+
         return $this->success();
     }
 

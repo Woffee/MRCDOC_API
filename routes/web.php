@@ -70,4 +70,8 @@ $app->group([
     $app->get('/comments/{fileId}', 'CommentController@commentList');
     $app->post('/comments', 'CommentController@createComment');
     $app->delete('/comments/{cid}', 'CommentController@deleteComment');
+
+    /** 通知 */
+    $app->get('/notices', 'NoticeController@noticesList');
+    $app->delete('/notices', 'NoticeController@clearNotice');
 });
