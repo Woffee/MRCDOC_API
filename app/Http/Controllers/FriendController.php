@@ -124,6 +124,20 @@ class FriendController extends Controller
         if( !$res ){
             return $this->error('同意或拒绝好友失败');
         }
+
+        //向申请人发出通知
+        $noticeService = new NoticeService();
+        $userService = new UserService();
+        $userInfo = $userService->getUserInfo($fid);
+        $notice = [
+            'type'=>2,  //对方同意了你的好友申请
+            'from_uid'=>$fid,
+            'from_username'=>$userInfo['username'],
+            'from_picture'=>$userInfo['picture'],
+            'create_time'=>time(),
+        ];
+        $noticeService->insertNotice($fid, $notice);
+
         return $this->success();
     }
 
