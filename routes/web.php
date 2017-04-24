@@ -61,6 +61,7 @@ $app->group([
 
     /** 个人中心 */
     $app->get('/user', 'UserController@index');
+    $app->put('/user', 'UserController@update');
 
     /** 收藏文件 */
     $app->get('/stars', 'StarController@starFilesList');

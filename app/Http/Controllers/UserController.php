@@ -39,17 +39,39 @@ class UserController extends Controller
         $userService = new UserService();
         $userInfo = $userService->getUserInfo($uid);
 
-        $friendService = new FriendService();
-        $friendings = $friendService->getMyFriendings($uid);
+//        $friendService = new FriendService();
+//        $friendings = $friendService->getMyFriendings($uid);
 
         return $this->success([
             'userinfo'=>$userInfo,
-            'new_friends_applications'=>$friendings,
+            //'new_friends_applications'=>$friendings,
         ]);
     }
 
     public function update(Request $request)
     {
+        $inputs = $request->only('uid','username','picture');
+        $validator = app('validator')->make($inputs, [
+            'uid'     => 'required',
+            'username'=> 'required',
+            'picture' => 'required'
+        ], ['required' => ':attribute 不能为空']);
+        if ($validator->fails()) {
+            return $this->error($validator->errors()->all());
+        }
 
+        $uid = (int)$inputs['uid'];
+        $username = $inputs['username'];
+        $picture  = $inputs['picture'];
+
+        $userService = new UserService();
+        $userService->setUid($uid);
+        $userService->setUsername($username);
+        $userService->setPicture($picture);
+        if( $userService->updateUserInfo()){
+            return $this->success('修改成功');
+        }else{
+            return $this->error('修改失败');
+        }
     }
 }

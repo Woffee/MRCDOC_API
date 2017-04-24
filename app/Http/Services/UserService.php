@@ -13,6 +13,9 @@ use App\Http\Models\Users;
 
 class UserService
 {
+    private $_uid=0;
+    private $_username='';
+    private $_picture='';
 
     public function getUserInfo($uid)
     {
@@ -21,5 +24,64 @@ class UserService
             ->where('id',$uid)->first();
         return $res ? $res->toArray() : [];
     }
+
+    public function updateUserInfo()
+    {
+        $user = [
+            'username'=>$this->_username,
+            'picture' =>$this->_picture,
+            'update_time'=>time()
+        ];
+        return Users::where('id',$this->_uid)->update($user);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getUid()
+    {
+        return $this->_uid;
+    }
+
+    /**
+     * @param mixed $uid
+     */
+    public function setUid($uid)
+    {
+        $this->_uid = $uid;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getUsername()
+    {
+        return $this->_username;
+    }
+
+    /**
+     * @param mixed $username
+     */
+    public function setUsername($username)
+    {
+        $this->_username = $username;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPicture()
+    {
+        return $this->_picture;
+    }
+
+    /**
+     * @param mixed $picture
+     */
+    public function setPicture($picture)
+    {
+        $this->_picture = $picture;
+    }
+
 
 }

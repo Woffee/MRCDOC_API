@@ -65,10 +65,12 @@ class StarService
         $stars =  $stars ? $stars->toArray() : [];
 
         $count = Files::where('status',0)
+            ->where('uid',$uid)
             ->whereIn('file_id',$stars)
             ->count();
 
         $files = Files::where('status',0)
+            ->where('uid',$uid)
             ->whereIn('file_id',$stars)
             ->skip($limit)
             ->take($offset)
@@ -86,7 +88,6 @@ class StarService
                 'creator_picture' =>$userInfo['picture'],
                 'type'            =>$file['type'],
                 'is_star'         =>self::isStar($uid,$file['file_id']),
-                'content'         =>$file['content'],
                 'create_time'     =>Tools::human_time_diff($file['create_time']),
                 'update_time'     =>Tools::human_time_diff($file['update_time']),
             ];
