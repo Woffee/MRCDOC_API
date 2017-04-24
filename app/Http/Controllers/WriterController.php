@@ -95,7 +95,7 @@ class WriterController extends Controller
 
             //通知
             $notice = [
-                'type'=>0,
+                'type'=>1,
                 'message'=>$userInfo['username'].'添加你为协作者',
                 'from_uid'=>$uid,
                 'from_username'=>$userInfo['username'],
