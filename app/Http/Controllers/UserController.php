@@ -48,6 +48,11 @@ class UserController extends Controller
         ]);
     }
 
+    /**
+     * Update user information
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function update(Request $request)
     {
         $inputs = $request->only('uid','username','picture');
@@ -70,6 +75,41 @@ class UserController extends Controller
         $userService->setPicture($picture);
         if( $userService->updateUserInfo()){
             return $this->success('修改成功');
+        }else{
+            return $this->error('修改失败');
+        }
+    }
+
+
+    public function changePassword(Request $request)
+    {
+        $inputs = $request->only('uid','password_old','password_new');
+        $validator = app('validator')->make($inputs, [
+            'uid'     => 'required',
+            'password_old' => 'required',
+            'password_new' => 'required'
+        ], ['required' => ':attribute 不能为空']);
+        if ($validator->fails()) {
+            return $this->error($validator->errors()->all());
+        }
+
+        $uid = (int)$inputs['uid'];
+        $old = (string)$inputs['password_old'];
+        $new = (string)$inputs['password_new'];
+
+        if( $old == $new ){
+            $this->error('修改失败：新旧密码不能一致');
+        }
+
+        $userService = new UserService();
+        $userService->setUid($uid);
+
+        if( !$userService->checkPassword($old)){
+            return $this->error('修改失败：原密码错误');
+        }
+
+        if( $userService->changePassword($new) ){
+            return $this->success();
         }else{
             return $this->error('修改失败');
         }

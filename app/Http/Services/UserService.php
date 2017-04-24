@@ -35,6 +35,23 @@ class UserService
         return Users::where('id',$this->_uid)->update($user);
     }
 
+    public function checkPassword($old)
+    {
+        return Users::where([
+            'id'=>$this->_uid,
+            'password'=>$old,
+        ])->exists();
+    }
+
+    public function changePassword($new)
+    {
+        return Users::where('id',$this->_uid)
+            ->update([
+                'password'   =>$new,
+                'update_time'=>time(),
+            ]);
+    }
+
     /**
      * @return mixed
      */

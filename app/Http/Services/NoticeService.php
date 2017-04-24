@@ -23,49 +23,41 @@ class NoticeService
 
     public function insertNotice($uid, $notice)
     {
-        $key = $this->getKey( $uid );
-        $this->redis->zadd($key, time() ,json_encode($notice));
-        $key = $this->getCountKey($uid);
+        //生成 notice ID
+        $key = RedisKeys::ZSET_NOTICES.$uid.':nextid';
+        $id = (int)$this->redis->get($key);
         $this->redis->incr($key);
+
+        //生成 notice
+        $key = RedisKeys::ZSET_NOTICES.$uid.':'.$id;
+        $this->redis->hset($key,'id',$id);
+        while($subkey = key($notice)){
+            $this->redis->hset($key,$subkey,$notice[$subkey]);
+            next($notice);
+        }
+
+        //加入 notice 集合
+        $key = RedisKeys::ZSET_NOTICES.$uid.':all';
+        $this->redis->zadd($key, time() , $id);
     }
 
-    public function getCount($uid)
-    {
-        $key = $this->getCountKey($uid);
-        return (int)$this->redis->get($key);
-    }
 
     public function getNotices($uid)
     {
-        $key = $this->getKey($uid);
+        $key = RedisKeys::ZSET_NOTICES.$uid.':all';
         $notices = $this->redis->zrevrange($key,0,-1);
 
-        $count = $this->getCount($uid);
         $res = [];
-        $i = 0;
-        foreach ($notices as $notice){
-            $arr = json_decode( $notice ,true);
-            $arr['is_read'] = $i<$count ? 0 : 1;
-            $arr['create_time'] = Tools::human_time_diff( $arr['create_time'] );
-            $res []= $arr;
-            $i++;
+        foreach ($notices as $id){
+            $key = RedisKeys::ZSET_NOTICES.$uid.':'.$id;
+            $res []= $this->redis->hgetall($key);
         }
         return $res;
     }
 
-    public function readNotices($uid)
+    public function readNotice($uid,$id)
     {
-        $key = $this->getCountKey($uid);
-        $this->redis->set($key,0);
-    }
-
-    public function getKey( $uid )
-    {
-        return RedisKeys::ZSET_NOTICES.$uid;
-    }
-
-    public function getCountKey($uid)
-    {
-        return RedisKeys::ZSET_NOTICES.$uid.':count';
+        $key = RedisKeys::ZSET_NOTICES.$uid.':'.$id;
+        $this->redis->hset($key,'is_read',1);
     }
 }

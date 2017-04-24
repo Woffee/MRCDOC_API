@@ -35,12 +35,12 @@ class NoticeController extends Controller
     }
 
     /**
-     * 清空通知
+     * 阅读通知
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function clearNotice(Request $request)
+    public function readNotice($id,Request $request)
     {
         $inputs = $request->only('uid');
         $validator = app('validator')->make($inputs,[
@@ -51,9 +51,9 @@ class NoticeController extends Controller
         $uid = (int)$inputs['uid'];
 
         $noticeService = new NoticeService();
-        $noticeService->readNotices($uid);
+        $noticeService->readNotice($uid,$id);
 
-        return $this->success(  );
+        return $this->success( );
     }
 
 }

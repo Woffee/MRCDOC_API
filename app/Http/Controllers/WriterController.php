@@ -102,6 +102,7 @@ class WriterController extends Controller
                 'from_picture'=>$userInfo['picture'],
                 'file_id'=>$fileId,
                 'filename'=>$fileInfo['filename'],
+                'is_read'=>0,
                 'create_time'=>time(),
             ];
             $noticeService->insertNotice($wid, $notice);

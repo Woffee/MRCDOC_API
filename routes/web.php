@@ -62,6 +62,7 @@ $app->group([
     /** 个人中心 */
     $app->get('/user', 'UserController@index');
     $app->put('/user', 'UserController@update');
+    $app->put('/user/password', 'UserController@changePassword');
 
     /** 收藏文件 */
     $app->get('/stars', 'StarController@starFilesList');
@@ -74,5 +75,5 @@ $app->group([
 
     /** 通知 */
     $app->get('/notices', 'NoticeController@noticesList');
-    $app->delete('/notices', 'NoticeController@clearNotice');
+    $app->delete('/notices/{id}', 'NoticeController@readNotice');
 });

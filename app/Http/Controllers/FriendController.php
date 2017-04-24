@@ -93,6 +93,7 @@ class FriendController extends Controller
             'from_uid'=>$uid,
             'from_username'=>$userInfo['username'],
             'from_picture'=>$userInfo['picture'],
+            'is_read'=>0,
             'create_time'=>time(),
         ];
         $noticeService->insertNotice($fid, $notice);
@@ -134,6 +135,8 @@ class FriendController extends Controller
             'from_uid'=>$fid,
             'from_username'=>$userInfo['username'],
             'from_picture'=>$userInfo['picture'],
+            'is_accept'=>$isAccept,
+            'is_read'=>0,
             'create_time'=>time(),
         ];
         $noticeService->insertNotice($fid, $notice);
