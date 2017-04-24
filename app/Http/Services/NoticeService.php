@@ -67,4 +67,15 @@ class NoticeService
         $key = RedisKeys::ZSET_NOTICES.$uid.':'.$id;
         $this->redis->hset($key,'is_read',1);
     }
+
+    public function clearNotices($uid)
+    {
+        $key = RedisKeys::ZSET_NOTICES.$uid.':all';
+        $notices = $this->redis->zrevrange($key,0,-1);
+
+        foreach ($notices as $id){
+            $key = RedisKeys::ZSET_NOTICES.$uid.':'.$id;
+            $this->redis->hset($key,'is_read',1);
+        }
+    }
 }

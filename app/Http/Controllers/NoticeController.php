@@ -56,4 +56,20 @@ class NoticeController extends Controller
         return $this->success( );
     }
 
+    public function clearNotices(Request $request)
+    {
+        $inputs = $request->only('uid');
+        $validator = app('validator')->make($inputs,[
+            'uid'       =>    'required|integer',
+        ],['required' => ':attribute不能为空']);
+        if ($validator->fails()) return $this->error($validator->errors()->all());
+
+        $uid = (int)$inputs['uid'];
+
+        $noticeService = new NoticeService();
+        $noticeService->clearNotices($uid);
+
+        return $this->success( );
+    }
+
 }

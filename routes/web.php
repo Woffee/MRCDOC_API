@@ -75,5 +75,6 @@ $app->group([
 
     /** 通知 */
     $app->get('/notices', 'NoticeController@noticesList');
+    $app->delete('/notices', 'NoticeController@clearNotices');
     $app->delete('/notices/{id}', 'NoticeController@readNotice');
 });
