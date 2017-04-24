@@ -74,7 +74,7 @@ class WriterController extends Controller
         $friendService = new FriendService();
 
         if( !$fileService->isCreator($fileId,$uid) ){
-            return $this->error('权限不够：您不是该文档的创建者');
+            return $this->error('文件不存在，或您不是该文档的创建者');
         }
 
         $fileInfo = $fileService->getFileBaseInfo($fileId);

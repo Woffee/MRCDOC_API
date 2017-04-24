@@ -27,6 +27,7 @@ class NoticeService
         $key = RedisKeys::ZSET_NOTICES.$uid.':nextid';
         $id = (int)$this->redis->get($key);
         $this->redis->incr($key);
+        $this->redis->expire($key,RedisKeys::CACHE_EXPIRED_TIME);
 
         //生成 notice
         $key = RedisKeys::ZSET_NOTICES.$uid.':'.$id;
@@ -35,10 +36,15 @@ class NoticeService
             $this->redis->hset($key,$subkey,$notice[$subkey]);
             next($notice);
         }
+        $this->redis->expire($key,RedisKeys::CACHE_EXPIRED_TIME);
 
         //加入 notice 集合
         $key = RedisKeys::ZSET_NOTICES.$uid.':all';
         $this->redis->zadd($key, time() , $id);
+        $count = $this->redis->zcard($key);
+        $num = $count - 1000;
+        if( $num>0 )$this->redis->zremrangebyrank($key,0,$num-1);
+        $this->redis->expire($key,RedisKeys::CACHE_EXPIRED_TIME);
     }
 
 
@@ -50,7 +56,8 @@ class NoticeService
         $res = [];
         foreach ($notices as $id){
             $key = RedisKeys::ZSET_NOTICES.$uid.':'.$id;
-            $res []= $this->redis->hgetall($key);
+            $notice = $this->redis->hgetall($key);
+            if($notice)$res []= $notice;
         }
         return $res;
     }
