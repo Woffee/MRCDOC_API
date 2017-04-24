@@ -90,10 +90,13 @@ class AuthController extends Controller
             return $this->error('用户名已存在');
         }
 
+        $num = rand(1,9);
+        $picture = sprintf('/uploads/avatar%02d.jpg',$num);
+
         $user = [
             'username' => $username,
             'password' => $password,
-            'picture' => 'https://pic2.zhimg.com/33a85ab39e985ab6823ad93de0b826f5_im.jpg',
+            'picture' => $picture,
             'register_ip' => $request->ip(),
             'create_time'=>time(),
             'update_time'=>time(),
