@@ -57,6 +57,7 @@ class NoticeService
         foreach ($notices as $id){
             $key = RedisKeys::ZSET_NOTICES.$uid.':'.$id;
             $notice = $this->redis->hgetall($key);
+            $notice['create_time'] = Tools::human_time_diff( $notice['create_time'] );
             if($notice)$res []= $notice;
         }
         return $res;
