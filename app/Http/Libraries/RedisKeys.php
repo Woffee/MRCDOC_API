@@ -16,7 +16,7 @@ class RedisKeys
 {
 
     /** 公共缓存有效期 **/
-    const CACHE_EXPIRED_TIME = 259200; //3600*24*3=259200
+    const CACHE_EXPIRED_TIME = 2592000; //3600*24*30=2592000
 
     /** 客户端ID */
     const SET_CLIENTS_ONE = 'mrcdoc:clients:';

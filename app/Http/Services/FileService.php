@@ -87,6 +87,7 @@ class FileService
         if( empty($file) )return [];
 
         $file = $file->toArray() ;
+        Files::where('file_id',$fileId)->update(['update_time'=>time()]);
 
         $redis = new Redis();
         $redisClient = $redis->getClient();
@@ -103,7 +104,7 @@ class FileService
              'creator_name'    =>$userInfo['username'],
              'creator_picture' =>$userInfo['picture'],
              'type'            =>$file['type'],
-             'content'         =>$content,
+             'content'         =>(string)$content,
              'create_time'     =>Tools::human_time_diff($file['create_time']),
              'update_time'     =>Tools::human_time_diff($file['update_time']),
         ];
