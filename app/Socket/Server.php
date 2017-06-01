@@ -5,7 +5,7 @@ namespace App\Socket;
 use App\Http\Libraries\RedisKeys;
 use swoole_websocket_server;
 use Dotenv\Dotenv;
-
+use App\Http\Models\Redis;
 
 class Server
 {
