@@ -1,28 +1,14 @@
 # MRC DOC
 
+![demo](MRCDOC-demo.png)
+
 ## You need
 
  - Redis
  - MySQL
- - swoole
+ - PHP with swoole
  
 ## Nginx Config
-
-Front end:
-
-    server {
-        
-        ...
-        
-        location / {
-            try_files $uri $uri/ /index.html;
-        }
-        
-        ...
-        
-    }
-
-Back end:
 
     server {
     
@@ -41,7 +27,7 @@ Back end:
         
     }
     
-## Before start
+## Monitoring web socket
 
     cd .../MRCDOC_API
     php socket.php &
